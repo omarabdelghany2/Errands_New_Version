@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import project1 from "@/assets/project1.jpg";
@@ -43,6 +44,7 @@ const Projects = () => {
   }, []);
   const projects = [
     {
+      id: "1",
       title: "Digital Transformation Initiative",
       description: "Comprehensive digital transformation project that modernized legacy systems and improved operational efficiency by 45%.",
       image: project1,
@@ -50,6 +52,7 @@ const Projects = () => {
       videoName: "DT_Overview_2024.mp4"
     },
     {
+      id: "2",
       title: "Enterprise Automation Suite",
       description: "Custom automation solution that streamlined workflows across multiple departments, saving 200+ hours monthly.",
       image: project2,
@@ -57,6 +60,7 @@ const Projects = () => {
       videoName: "Automation_Demo.mp4"
     },
     {
+      id: "3",
       title: "Business Intelligence Platform",
       description: "Advanced analytics and reporting platform providing real-time insights for strategic decision-making.",
       image: project3,
@@ -80,17 +84,17 @@ const Projects = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {projects.map((project, index) => (
-            <div
-              key={index}
-              ref={(el) => (cardRefs.current[index] = el)}
-              className={`transition-all duration-700 ease-out ${
-                visibleCards.includes(index)
-                  ? "opacity-100 translate-y-0"
-                  : "opacity-0 translate-y-12"
-              }`}
-            >
-              <Card className="overflow-hidden border-border hover:shadow-xl transition-smooth hover:-translate-y-2 group h-full"
-            >
+            <Link to={`/project/${project.id}`} key={index}>
+              <div
+                ref={(el) => (cardRefs.current[index] = el)}
+                className={`transition-all duration-700 ease-out ${
+                  visibleCards.includes(index)
+                    ? "opacity-100 translate-y-0"
+                    : "opacity-0 translate-y-12"
+                }`}
+              >
+                <Card className="overflow-hidden border-border hover:shadow-xl transition-smooth hover:-translate-y-2 group h-full cursor-pointer"
+              >
               <div className="relative overflow-hidden aspect-video">
                 <img
                   src={project.image}
@@ -119,7 +123,8 @@ const Projects = () => {
                 </p>
               </CardContent>
             </Card>
-            </div>
+              </div>
+            </Link>
           ))}
         </div>
       </div>
