@@ -19,13 +19,17 @@ const Projects = () => {
             if (entry.isIntersecting) {
               setTimeout(() => {
                 setVisibleCards((prev) => [...new Set([...prev, index])]);
-              }, index * 150);
+              }, index * 100);
+            } else {
+              setTimeout(() => {
+                setVisibleCards((prev) => prev.filter((i) => i !== index));
+              }, index * 50);
             }
           });
         },
         {
-          threshold: 0.2,
-          rootMargin: "0px 0px -100px 0px"
+          threshold: 0.15,
+          rootMargin: "0px"
         }
       );
 
