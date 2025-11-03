@@ -46,7 +46,11 @@ const Projects = () => {
           {projects.map((project, index) => (
             <Card
               key={index}
-              className="overflow-hidden border-border hover:shadow-xl transition-smooth hover:-translate-y-2 group"
+              className="overflow-hidden border-border hover:shadow-xl transition-smooth hover:-translate-y-2 group animate-fade-in opacity-0"
+              style={{ 
+                animationDelay: `${index * 150}ms`,
+                animationFillMode: 'forwards'
+              }}
             >
               <div className="relative overflow-hidden aspect-video">
                 <img
