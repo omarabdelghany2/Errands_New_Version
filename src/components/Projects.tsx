@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import project1 from "@/assets/project1.jpg";
@@ -5,6 +6,37 @@ import project2 from "@/assets/project2.jpg";
 import project3 from "@/assets/project3.jpg";
 
 const Projects = () => {
+  const [visibleCards, setVisibleCards] = useState<number[]>([]);
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  useEffect(() => {
+    const observers = cardRefs.current.map((card, index) => {
+      if (!card) return null;
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              setTimeout(() => {
+                setVisibleCards((prev) => [...new Set([...prev, index])]);
+              }, index * 150);
+            }
+          });
+        },
+        {
+          threshold: 0.2,
+          rootMargin: "0px 0px -100px 0px"
+        }
+      );
+
+      observer.observe(card);
+      return observer;
+    });
+
+    return () => {
+      observers.forEach((observer) => observer?.disconnect());
+    };
+  }, []);
   const projects = [
     {
       title: "Digital Transformation Initiative",
@@ -44,13 +76,16 @@ const Projects = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {projects.map((project, index) => (
-            <Card
+            <div
               key={index}
-              className="overflow-hidden border-border hover:shadow-xl transition-smooth hover:-translate-y-2 group animate-fade-in opacity-0"
-              style={{ 
-                animationDelay: `${index * 150}ms`,
-                animationFillMode: 'forwards'
-              }}
+              ref={(el) => (cardRefs.current[index] = el)}
+              className={`transition-all duration-700 ease-out ${
+                visibleCards.includes(index)
+                  ? "opacity-100 translate-y-0"
+                  : "opacity-0 translate-y-12"
+              }`}
+            >
+              <Card className="overflow-hidden border-border hover:shadow-xl transition-smooth hover:-translate-y-2 group h-full"
             >
               <div className="relative overflow-hidden aspect-video">
                 <img
@@ -80,6 +115,7 @@ const Projects = () => {
                 </p>
               </CardContent>
             </Card>
+            </div>
           ))}
         </div>
       </div>
