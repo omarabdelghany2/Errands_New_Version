@@ -1,4 +1,4 @@
-import errandsLogo from "@/assets/errands-logo.png";
+import errandsLogo from "@/assets/errands-logo-transparent.png";
 
 const Footer = () => {
   return (
