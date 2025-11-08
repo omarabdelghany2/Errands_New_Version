@@ -1,9 +1,15 @@
+import errandsLogo from "@/assets/errands-logo.png";
+
 const Footer = () => {
   return (
     <footer className="bg-primary text-primary-foreground py-8">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center">
-          <h3 className="text-2xl font-bold mb-4">Errands</h3>
+          <img 
+            src={errandsLogo} 
+            alt="Errands Logo" 
+            className="h-16 w-auto mx-auto mb-4"
+          />
           <p className="text-primary-foreground/80 mb-4">
             Transforming businesses through innovation and excellence.
           </p>
