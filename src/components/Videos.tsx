@@ -17,7 +17,7 @@ const Videos = () => {
     retry: 1,
   });
 
-  const safeVideos = videos || [];
+  const safeVideos = Array.isArray(videos) ? videos : [];
 
   // Function to detect video platform
   const getVideoPlatform = (url: string) => {

@@ -24,8 +24,9 @@ const Contact = () => {
     retry: 1,
   });
 
-  const phones = (contactInfo || []).filter(item => item.type === 'phone');
-  const emails = (contactInfo || []).filter(item => item.type === 'email');
+  const safeContactInfo = Array.isArray(contactInfo) ? contactInfo : [];
+  const phones = safeContactInfo.filter(item => item.type === 'phone');
+  const emails = safeContactInfo.filter(item => item.type === 'email');
 
   const contactMutation = useMutation({
     mutationFn: contactsApi.create,

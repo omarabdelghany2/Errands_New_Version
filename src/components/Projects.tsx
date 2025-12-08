@@ -18,7 +18,7 @@ const Projects = () => {
     retry: 1,
   });
 
-  const safeProjects = projects || [];
+  const safeProjects = Array.isArray(projects) ? projects : [];
 
   useEffect(() => {
     const observers = cardRefs.current.map((card, index) => {
