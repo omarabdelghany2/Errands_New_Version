@@ -1,6 +1,5 @@
 import pkg from 'pg';
 const { Pool } = pkg;
-import Database from 'better-sqlite3';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -14,31 +13,40 @@ let pool;
 let sqliteDb;
 let dbType;
 
-if (usePostgres) {
-  // PostgreSQL for production (Railway)
-  console.log('🐘 Using PostgreSQL database');
-  dbType = 'postgres';
+// Initialize database connection
+async function initializeConnection() {
+  if (usePostgres) {
+    // PostgreSQL for production (Railway)
+    console.log('🐘 Using PostgreSQL database');
+    dbType = 'postgres';
 
-  pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-    ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : false
-  });
+    pool = new Pool({
+      connectionString: process.env.DATABASE_URL,
+      ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : false
+    });
 
-  // Test connection
-  pool.query('SELECT NOW()', (err, res) => {
-    if (err) {
-      console.error('PostgreSQL connection error:', err);
-    } else {
-      console.log('✅ PostgreSQL connected successfully');
-    }
-  });
-} else {
-  // SQLite for local development
-  console.log('📁 Using SQLite database (local development)');
-  dbType = 'sqlite';
-  sqliteDb = new Database(path.join(__dirname, 'database.sqlite'));
-  sqliteDb.pragma('foreign_keys = ON');
+    // Test connection
+    pool.query('SELECT NOW()', (err, res) => {
+      if (err) {
+        console.error('PostgreSQL connection error:', err);
+      } else {
+        console.log('✅ PostgreSQL connected successfully');
+      }
+    });
+  } else {
+    // SQLite for local development
+    console.log('📁 Using SQLite database (local development)');
+    dbType = 'sqlite';
+
+    // Dynamically import better-sqlite3 only when needed (local development)
+    const Database = (await import('better-sqlite3')).default;
+    sqliteDb = new Database(path.join(__dirname, 'database.sqlite'));
+    sqliteDb.pragma('foreign_keys = ON');
+  }
 }
+
+// Initialize connection
+await initializeConnection();
 
 // Database wrapper to provide consistent API
 const db = {
