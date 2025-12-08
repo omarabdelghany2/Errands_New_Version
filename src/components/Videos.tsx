@@ -11,10 +11,13 @@ const Videos = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Fetch videos from API
-  const { data: videos = [], isLoading } = useQuery<Video[]>({
+  const { data: videos, isLoading } = useQuery<Video[]>({
     queryKey: ['videos'],
     queryFn: videosApi.getAll,
+    retry: 1,
   });
+
+  const safeVideos = videos || [];
 
   // Function to detect video platform
   const getVideoPlatform = (url: string) => {
@@ -72,10 +75,10 @@ const Videos = () => {
       }
     };
 
-    if (videos.length > 0) {
+    if (safeVideos.length > 0) {
       fetchTikTokThumbnails();
     }
-  }, [videos]);
+  }, [safeVideos]);
 
   // Get the appropriate thumbnail for a video
   const getThumbnailUrl = (video: Video) => {
@@ -133,14 +136,14 @@ const Videos = () => {
           <div className="flex items-center justify-center py-20">
             <Loader2 className="h-12 w-12 animate-spin text-primary" />
           </div>
-        ) : videos.length === 0 ? (
+        ) : safeVideos.length === 0 ? (
           <div className="text-center py-20">
             <p className="text-xl text-muted-foreground">No videos to display yet.</p>
             <p className="text-sm text-muted-foreground mt-2">Check back soon for updates!</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {videos.map((video) => (
+            {safeVideos.map((video) => (
               <div
                 key={video.id}
                 onClick={() => handleVideoClick(video)}

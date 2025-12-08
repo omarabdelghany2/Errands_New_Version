@@ -12,10 +12,13 @@ const Projects = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
 
   // Fetch projects from API
-  const { data: projects = [], isLoading } = useQuery<Project[]>({
+  const { data: projects, isLoading } = useQuery<Project[]>({
     queryKey: ['projects'],
     queryFn: projectsApi.getAll,
+    retry: 1,
   });
+
+  const safeProjects = projects || [];
 
   useEffect(() => {
     const observers = cardRefs.current.map((card, index) => {
@@ -86,7 +89,7 @@ const Projects = () => {
     return () => {
       observers.forEach((observer) => observer?.disconnect());
     };
-  }, [projects.length]);
+  }, [safeProjects.length]);
 
   return (
     <section id="projects" className="py-20 sm:py-24" ref={sectionRef}>
@@ -105,14 +108,14 @@ const Projects = () => {
           <div className="flex items-center justify-center py-20">
             <Loader2 className="h-12 w-12 animate-spin text-primary" />
           </div>
-        ) : projects.length === 0 ? (
+        ) : safeProjects.length === 0 ? (
           <div className="text-center py-20">
             <p className="text-xl text-muted-foreground">No projects to display yet.</p>
             <p className="text-sm text-muted-foreground mt-2">Check back soon for updates!</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {projects.map((project, index) => (
+            {safeProjects.map((project, index) => (
               <Link to={`/project/${project.id}`} key={project.id}>
                 <div
                   ref={(el) => (cardRefs.current[index] = el)}

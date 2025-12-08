@@ -18,13 +18,14 @@ const Contact = () => {
   });
 
   // Fetch contact info
-  const { data: contactInfo = [] } = useQuery<ContactInfo[]>({
+  const { data: contactInfo } = useQuery<ContactInfo[]>({
     queryKey: ['contact-info'],
     queryFn: contactInfoApi.getAll,
+    retry: 1,
   });
 
-  const phones = contactInfo.filter(item => item.type === 'phone');
-  const emails = contactInfo.filter(item => item.type === 'email');
+  const phones = (contactInfo || []).filter(item => item.type === 'phone');
+  const emails = (contactInfo || []).filter(item => item.type === 'email');
 
   const contactMutation = useMutation({
     mutationFn: contactsApi.create,
