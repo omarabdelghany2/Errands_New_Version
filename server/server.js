@@ -19,8 +19,30 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+// CORS configuration
+const corsOptions = {
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+
+    // Allow frontend URL from environment variable
+    const allowedOrigins = [
+      process.env.FRONTEND_URL,
+      'http://localhost:8080',  // Local development
+      'http://localhost:5173',  // Vite default port
+    ].filter(Boolean); // Remove undefined values
+
+    if (allowedOrigins.some(allowed => origin.startsWith(allowed))) {
+      callback(null, true);
+    } else {
+      callback(null, true); // Allow all for now, can restrict later
+    }
+  },
+  credentials: true
+};
+
 // Middleware
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
