@@ -36,16 +36,6 @@ app.use('/api/contacts', contactsRouter);
 app.use('/api/thumbnails', thumbnailsRouter);
 app.use('/api/contact-info', contactInfoRouter);
 
-// Serve static files from the React app in production
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../dist')));
-
-  // Catch-all route for SPA (Express 5 compatible)
-  app.get('/*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../dist/index.html'));
-  });
-}
-
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
