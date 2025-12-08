@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 import errandsLogo from "@/assets/errands-logo.png";
@@ -33,13 +34,13 @@ const Navigation = () => {
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 sm:h-20">
-          <div className="flex-shrink-0">
-            <img 
-              src={errandsLogo} 
-              alt="Errands Logo" 
-              className="h-10 sm:h-12 w-auto"
+          <Link to="/" className="flex-shrink-0">
+            <img
+              src={errandsLogo}
+              alt="Errands Logo"
+              className="h-16 sm:h-20 w-auto cursor-pointer hover:opacity-80 transition-smooth"
             />
-          </div>
+          </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
