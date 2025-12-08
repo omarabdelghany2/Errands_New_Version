@@ -24,6 +24,11 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Health check endpoint (define before other routes)
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', message: 'Server is running' });
+});
+
 // API Routes
 app.use('/api/projects', projectsRouter);
 app.use('/api/videos', videosRouter);
@@ -35,15 +40,11 @@ app.use('/api/contact-info', contactInfoRouter);
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '../dist')));
 
-  app.get('*', (req, res) => {
+  // Catch-all route for SPA (Express 5 compatible)
+  app.get('/*', (req, res) => {
     res.sendFile(path.join(__dirname, '../dist/index.html'));
   });
 }
-
-// Health check endpoint
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', message: 'Server is running' });
-});
 
 // Error handling middleware
 app.use((err, req, res, next) => {
