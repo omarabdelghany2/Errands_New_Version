@@ -34,22 +34,28 @@ const Dashboard = () => {
   const [editingVideo, setEditingVideo] = useState<number | null>(null);
 
   // Fetch projects
-  const { data: projects = [], isLoading: projectsLoading } = useQuery<Project[]>({
+  const { data: projects, isLoading: projectsLoading } = useQuery<Project[]>({
     queryKey: ['projects'],
     queryFn: projectsApi.getAll,
+    retry: 1,
   });
+  const safeProjects = Array.isArray(projects) ? projects : [];
 
   // Fetch videos
-  const { data: videos = [], isLoading: videosLoading } = useQuery<Video[]>({
+  const { data: videos, isLoading: videosLoading } = useQuery<Video[]>({
     queryKey: ['videos'],
     queryFn: videosApi.getAll,
+    retry: 1,
   });
+  const safeVideos = Array.isArray(videos) ? videos : [];
 
   // Fetch contacts
-  const { data: contacts = [], isLoading: contactsLoading } = useQuery<Contact[]>({
+  const { data: contacts, isLoading: contactsLoading } = useQuery<Contact[]>({
     queryKey: ['contacts'],
     queryFn: contactsApi.getAll,
+    retry: 1,
   });
+  const safeContacts = Array.isArray(contacts) ? contacts : [];
 
   // Project mutations
   const createProjectMutation = useMutation({
@@ -291,11 +297,11 @@ const Dashboard = () => {
                   <div className="flex items-center justify-center py-8">
                     <Loader2 className="h-8 w-8 animate-spin" />
                   </div>
-                ) : projects.length === 0 ? (
+                ) : safeProjects.length === 0 ? (
                   <p className="text-muted-foreground text-center py-8">No projects yet. Add your first project above!</p>
                 ) : (
                   <div className="space-y-4">
-                    {projects.map((project) => (
+                    {safeProjects.map((project) => (
                       <div key={project.id} className="flex items-center justify-between p-4 border rounded-lg">
                         <div>
                           <h3 className="font-semibold">{project.title}</h3>
@@ -397,11 +403,11 @@ const Dashboard = () => {
                   <div className="flex items-center justify-center py-8">
                     <Loader2 className="h-8 w-8 animate-spin" />
                   </div>
-                ) : videos.length === 0 ? (
+                ) : safeVideos.length === 0 ? (
                   <p className="text-muted-foreground text-center py-8">No videos yet. Add your first video above!</p>
                 ) : (
                   <div className="space-y-4">
-                    {videos.map((video) => (
+                    {safeVideos.map((video) => (
                       <div key={video.id} className="flex items-center justify-between p-4 border rounded-lg">
                         <div>
                           <h3 className="font-semibold">{video.title}</h3>
@@ -440,11 +446,11 @@ const Dashboard = () => {
                   <div className="flex items-center justify-center py-8">
                     <Loader2 className="h-8 w-8 animate-spin" />
                   </div>
-                ) : contacts.length === 0 ? (
+                ) : safeContacts.length === 0 ? (
                   <p className="text-muted-foreground text-center py-8">No contact submissions yet.</p>
                 ) : (
                   <div className="space-y-4">
-                    {contacts.map((contact) => (
+                    {safeContacts.map((contact) => (
                       <div key={contact.id} className="p-4 border rounded-lg space-y-2">
                         <div className="flex items-start justify-between">
                           <div>
