@@ -4,9 +4,9 @@ import db from '../db.js';
 const router = express.Router();
 
 // Get all contacts
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
   try {
-    const contacts = db.prepare('SELECT * FROM contacts ORDER BY created_at DESC').all();
+    const contacts = await db.prepare('SELECT * FROM contacts ORDER BY created_at DESC').all();
     res.json(contacts);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -14,7 +14,7 @@ router.get('/', (req, res) => {
 });
 
 // Create contact (contact form submission)
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
   try {
     const { name, email, message } = req.body;
 
@@ -31,9 +31,9 @@ router.post('/', (req, res) => {
     const stmt = db.prepare(
       'INSERT INTO contacts (name, email, message) VALUES (?, ?, ?)'
     );
-    const result = stmt.run(name, email, message);
+    const result = await stmt.run(name, email, message);
 
-    const newContact = db.prepare('SELECT * FROM contacts WHERE id = ?').get(result.lastInsertRowid);
+    const newContact = await db.prepare('SELECT * FROM contacts WHERE id = ?').get(result.lastInsertRowid);
     res.status(201).json(newContact);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -41,10 +41,10 @@ router.post('/', (req, res) => {
 });
 
 // Delete contact
-router.delete('/:id', (req, res) => {
+router.delete('/:id', async (req, res) => {
   try {
     const stmt = db.prepare('DELETE FROM contacts WHERE id = ?');
-    const result = stmt.run(req.params.id);
+    const result = await stmt.run(req.params.id);
 
     if (result.changes === 0) {
       return res.status(404).json({ error: 'Contact not found' });

@@ -4,9 +4,9 @@ import db from '../db.js';
 const router = express.Router();
 
 // Get all projects
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
   try {
-    const projects = db.prepare('SELECT * FROM projects ORDER BY created_at DESC').all();
+    const projects = await db.prepare('SELECT * FROM projects ORDER BY created_at DESC').all();
     res.json(projects);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -14,9 +14,9 @@ router.get('/', (req, res) => {
 });
 
 // Get single project
-router.get('/:id', (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
-    const project = db.prepare('SELECT * FROM projects WHERE id = ?').get(req.params.id);
+    const project = await db.prepare('SELECT * FROM projects WHERE id = ?').get(req.params.id);
     if (!project) {
       return res.status(404).json({ error: 'Project not found' });
     }
@@ -27,7 +27,7 @@ router.get('/:id', (req, res) => {
 });
 
 // Create project
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
   try {
     const { title, description, image, category } = req.body;
 
@@ -38,9 +38,9 @@ router.post('/', (req, res) => {
     const stmt = db.prepare(
       'INSERT INTO projects (title, description, image, category) VALUES (?, ?, ?, ?)'
     );
-    const result = stmt.run(title, description, image, category);
+    const result = await stmt.run(title, description, image, category);
 
-    const newProject = db.prepare('SELECT * FROM projects WHERE id = ?').get(result.lastInsertRowid);
+    const newProject = await db.prepare('SELECT * FROM projects WHERE id = ?').get(result.lastInsertRowid);
     res.status(201).json(newProject);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -48,7 +48,7 @@ router.post('/', (req, res) => {
 });
 
 // Update project
-router.put('/:id', (req, res) => {
+router.put('/:id', async (req, res) => {
   try {
     const { title, description, image, category } = req.body;
 
@@ -59,13 +59,13 @@ router.put('/:id', (req, res) => {
     const stmt = db.prepare(
       'UPDATE projects SET title = ?, description = ?, image = ?, category = ? WHERE id = ?'
     );
-    const result = stmt.run(title, description, image, category, req.params.id);
+    const result = await stmt.run(title, description, image, category, req.params.id);
 
     if (result.changes === 0) {
       return res.status(404).json({ error: 'Project not found' });
     }
 
-    const updatedProject = db.prepare('SELECT * FROM projects WHERE id = ?').get(req.params.id);
+    const updatedProject = await db.prepare('SELECT * FROM projects WHERE id = ?').get(req.params.id);
     res.json(updatedProject);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -73,10 +73,10 @@ router.put('/:id', (req, res) => {
 });
 
 // Delete project
-router.delete('/:id', (req, res) => {
+router.delete('/:id', async (req, res) => {
   try {
     const stmt = db.prepare('DELETE FROM projects WHERE id = ?');
-    const result = stmt.run(req.params.id);
+    const result = await stmt.run(req.params.id);
 
     if (result.changes === 0) {
       return res.status(404).json({ error: 'Project not found' });
